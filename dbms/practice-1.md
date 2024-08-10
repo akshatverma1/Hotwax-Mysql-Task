@@ -3,40 +3,83 @@
 ## Objective
 Design a database to manage customer profiles, contact details, addresses, and user logins for an e-commerce platform.
 
-## Requirements
+** create command--**
+   **CREATE DATABASE ecommerce;**
+   use ecommerce;
+   
+**1.-- Create the Customer table..**
+ 
+CREATE TABLE Customer (
+    CustomerID INT PRIMARY KEY AUTO_INCREMENT,
+    FirstName VARCHAR(50),
+    MiddleName VARCHAR(50),
+    LastName VARCHAR(50),
+    Roles VARCHAR(100)
+);
+  
+**2.-- Create the Contact Information table..**
 
-1. **Customer Information**
-    - Each customer has a unique identifier.
-    - A customer can have a first name, middle name, and last name.
-    - A customer can have multiple roles (e.g., Customer).
-
-2. **Contact Information**
-    - A customer can have multiple contact mechanisms, including email addresses and phone numbers.
-    - Contact mechanisms should store information like email addresses and phone numbers with associated purposes (e.g., billing, shipping).
-
-3. **Address Information**
-    - A customer can have multiple addresses.
-    - Addresses should include details such as street address, city, state/province, postal code, and country.
-    - Addresses can have different purposes (e.g., billing, shipping, general correspondence).
-
-4. **User Logins**
-    - Each customer can have one or more user logins.
-    - User logins should include a username and password.
-    - Each user login can be associated with one or more security groups that determine access rights to different parts of the system.
-
-5. **Payment Information**
-    - A customer can have multiple payment methods, including credit cards.
-    - Payment information should include details such as credit card number, expiration date, and billing address.
-
-
-## Deliverables
-
- **ER Diagram**
-    - Create an Entity-Relationship (ER) diagram to represent the tables and relationships.
+CREATE TABLE ContactInfo (
+    ContactID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    ContactType VARCHAR(20),
+    ContactValue VARCHAR(100),
+    Purpose VARCHAR(50),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
 
 
-## Instructions
-- Ensure the database design supports all the requirements specified.
-- Focus on data integrity and relationships between tables.
-- Use appropriate data types for each column.
-- Implement primary keys and foreign keys to maintain referential integrity.
+**3.-- Create the Address table...**
+
+CREATE TABLE Address (
+    AddressID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    StreetAddress VARCHAR(100),
+    City VARCHAR(50),
+    StateProvince VARCHAR(50),
+    PostalCode VARCHAR(20),
+    Country VARCHAR(50),
+    Purpose VARCHAR(50),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+
+**4.-- Create the User Login table..**
+
+CREATE TABLE UserLogin (
+    LoginID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    Username VARCHAR(50),
+    Password VARCHAR(255),
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID)
+);
+
+**5.-- Create the Security Group table..**
+
+CREATE TABLE SecurityGroup (
+    SecurityGroupID INT PRIMARY KEY AUTO_INCREMENT,
+    GroupName VARCHAR(50)
+);
+
+**6.-- Create the User Login Security Group table..**
+
+CREATE TABLE UserLoginSecurityGroup (
+    LoginID INT,
+    SecurityGroupID INT,
+    PRIMARY KEY (LoginID, SecurityGroupID),
+    FOREIGN KEY (LoginID) REFERENCES UserLogin(LoginID),
+    FOREIGN KEY (SecurityGroupID) REFERENCES SecurityGroup(SecurityGroupID)
+);
+
+**7.-- Create the Payment Information table**
+
+CREATE TABLE PaymentInformation (
+    PaymentID INT PRIMARY KEY AUTO_INCREMENT,
+    CustomerID INT,
+    PaymentType VARCHAR(20),
+    CardNumber VARCHAR(20),
+    ExpirationDate DATE,
+    BillingAddressID INT,
+    FOREIGN KEY (CustomerID) REFERENCES Customer(CustomerID),
+    FOREIGN KEY (BillingAddressID) REFERENCES Address(AddressID)
+);
